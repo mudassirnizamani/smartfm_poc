@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:smartfm_poc/models/user.dart';
 
 class AuthenticateResponse {
