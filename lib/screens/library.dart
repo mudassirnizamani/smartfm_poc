@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartfm_poc/components/cusom_drawer.dart';
 
-import '../../components/bottom_navigator.dart';
+import '../components/bottom_navigator.dart';
 
 class Library extends StatefulWidget {
   const Library({super.key});

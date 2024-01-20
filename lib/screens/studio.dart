@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smartfm_poc/config/routes.dart';
 
 class Studio extends StatefulWidget {
   const Studio({super.key});
@@ -40,7 +41,7 @@ class _StudioState extends State<Studio> {
                     ),
                   ),
                   const Text(
-                    "Create an audiobook and share it with the world",
+                    "Create audiobooks and share with the world",
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
@@ -48,7 +49,9 @@ class _StudioState extends State<Studio> {
                     height: 25,
                   ),
                   OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, Routes.createAudioBook);
+                    },
                     style: OutlinedButton.styleFrom(
                       elevation: 6,
                       fixedSize: const Size(300, 50),

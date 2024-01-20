@@ -61,7 +61,6 @@ class _MyWidgetState extends State<Auth> {
       }
 
       final generateOtpResponse = await AuthService().generateOtp(_phoneNumber);
-      print(generateOtpResponse.otp);
       setState(() {
         _userOto = generateOtpResponse.otp.toString();
         _verificationType = VerificationType.otp;

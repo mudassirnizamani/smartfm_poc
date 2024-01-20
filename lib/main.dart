@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:smartfm_poc/config/routes.dart';
-import 'package:smartfm_poc/screens/auth/auth.dart';
-import 'package:smartfm_poc/screens/home/home.dart';
+import 'package:smartfm_poc/screens/create_audio_book.dart';
+import 'package:smartfm_poc/screens/auth.dart';
+import 'package:smartfm_poc/screens/home.dart';
 import 'package:smartfm_poc/screens/landing.dart';
-import 'package:smartfm_poc/screens/library/library.dart';
+import 'package:smartfm_poc/screens/library.dart';
 import 'package:smartfm_poc/screens/profile.dart';
-import 'package:smartfm_poc/screens/search/Search.dart';
+import 'package:smartfm_poc/screens/search.dart';
 import 'package:smartfm_poc/screens/studio.dart';
 
 void main() {
@@ -31,7 +32,8 @@ class App extends StatelessWidget {
         Routes.library: (context) => const Library(),
         Routes.search: (context) => const Search(),
         Routes.profile: (context) => const Profile(),
-        Routes.studio: (context) => const Studio()
+        Routes.studio: (context) => const Studio(),
+        Routes.createAudioBook: (context) => const CreateAudioBook()
       },
     );
   }
