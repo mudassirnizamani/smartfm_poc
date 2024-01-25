@@ -41,7 +41,6 @@ class _BottomNavigatorState extends State<BottomNavigator> {
         ),
       ],
       currentIndex: selectedIndex,
-      selectedItemColor: Colors.amber[800],
       onTap: onTap,
     );
   }

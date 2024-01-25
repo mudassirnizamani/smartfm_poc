@@ -34,7 +34,6 @@ class AuthService {
 
       throw Exception(res.data);
     } on DioException catch (e) {
-      print(e.response?.data);
       throw Exception(e.response?.data);
     }
   }

@@ -36,7 +36,6 @@ class AudioBookService {
 
       return CreateAudioBookResponse.fromJson(res.data);
     } on DioException catch (e) {
-      print(e.response?.data);
       throw Exception(e.response?.data);
     }
   }

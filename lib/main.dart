@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smartfm_poc/config/app_theme.dart';
 import 'package:smartfm_poc/config/routes.dart';
 import 'package:smartfm_poc/screens/create_audio_book.dart';
 import 'package:smartfm_poc/screens/auth.dart';
@@ -21,8 +22,8 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'SmartFm',
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.dark,
       initialRoute: Routes.root,
       routes: {

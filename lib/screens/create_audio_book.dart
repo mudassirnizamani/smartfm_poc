@@ -33,6 +33,8 @@ class _CreateAudioBookState extends State<CreateAudioBook> {
     }
 
     try {
+      final navigator = Navigator.of(context);
+
       await AudioBookService()
           .createAudioBook(name, description, genre, cover!);
 
@@ -45,7 +47,7 @@ class _CreateAudioBookState extends State<CreateAudioBook> {
           textColor: Colors.white,
           fontSize: 16.0);
 
-      Navigator.pushNamed(context, Routes.home);
+      navigator.pushNamed(Routes.home);
     } catch (e) {
       Fluttertoast.showToast(
           msg: "Something went wrong",

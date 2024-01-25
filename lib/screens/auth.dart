@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:pinput/pinput.dart';
+import 'package:smartfm_poc/config/routes.dart';
 import 'package:smartfm_poc/services/auth.dart';
 import 'package:smartfm_poc/storage/user_storage.dart';
 
@@ -42,10 +43,12 @@ class _MyWidgetState extends State<Auth> {
   void handleSubmit() async {
     try {
       if (_verificationType == VerificationType.otp) {
+        NavigatorState navigator = Navigator.of(context);
+
         final authenticateResponse =
             await AuthService().authenticate(_phoneNumber, _otp);
 
-        await UserStorage().saveUser(authenticateResponse.user);
+        await UserStorage.saveUser(authenticateResponse.user);
 
         Fluttertoast.showToast(
             msg: "Successfully logged in",
@@ -56,8 +59,8 @@ class _MyWidgetState extends State<Auth> {
             textColor: Colors.white,
             fontSize: 16.0);
 
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/home', ModalRoute.withName('/home'));
+        navigator.pushNamedAndRemoveUntil(
+            Routes.home, ModalRoute.withName(Routes.home));
       }
 
       final generateOtpResponse = await AuthService().generateOtp(_phoneNumber);

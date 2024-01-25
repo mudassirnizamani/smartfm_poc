@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smartfm_poc/models/user.dart';
+import 'package:smartfm_poc/config/routes.dart';
 import 'package:smartfm_poc/storage/user_storage.dart';
 
 class Landing extends StatefulWidget {
@@ -19,16 +16,17 @@ class _LandingState extends State<Landing> {
     _checkAuth();
   }
 
-  _checkAuth() async {
-    final user = await UserStorage().getUser();
+  NavigatorState _getNavigator() => Navigator.of(context);
+
+  Future<void> _checkAuth() async {
+    final user = await UserStorage.getUser();
+    final navigator = _getNavigator();
 
     if (user == null) {
-      Navigator.pushNamedAndRemoveUntil(
-          context, '/auth', ModalRoute.withName('/auth'));
+      navigator.pushNamedAndRemoveUntil(Routes.auth, (route) => false);
+    } else {
+      navigator.pushNamedAndRemoveUntil(Routes.home, (route) => false);
     }
-
-    Navigator.pushNamedAndRemoveUntil(
-        context, '/home', ModalRoute.withName('/home'));
   }
 
   @override
