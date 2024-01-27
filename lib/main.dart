@@ -24,7 +24,7 @@ class App extends StatelessWidget {
       title: 'SmartFm',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.system,
       initialRoute: Routes.root,
       routes: {
         Routes.root: (context) => const Landing(),

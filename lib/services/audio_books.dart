@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:smartfm_poc/services/api.dart';
+import 'package:smartfm_poc/models/audio_book.dart';
 
 class CreateAudioBookResponse {
   final String? id;
@@ -22,7 +23,7 @@ class CreateAudioBookResponse {
 }
 
 class AudioBookService {
-  Future<CreateAudioBookResponse> createAudioBook(
+  static Future<CreateAudioBookResponse> createAudioBook(
       String name, String description, String genre, File cover) async {
     FormData formData = FormData.fromMap({
       'name': name,
@@ -35,6 +36,24 @@ class AudioBookService {
       final res = await Api.dio.post('/audiobook', data: formData);
 
       return CreateAudioBookResponse.fromJson(res.data);
+    } on DioException catch (e) {
+      throw Exception(e.response?.data);
+    }
+  }
+
+  static Future<List<AudioBook>> fetchAudioBooks() async {
+    try {
+      final res = await Api.dio.get('/audiobooks');
+
+      if (res.data["audioBooks"] == null) {
+        return [] as List<AudioBook>;
+      }
+
+      final List<AudioBook> audioBooks = res.data["audioBooks"]
+          .map<AudioBook>((json) => AudioBook.fromJson(json))
+          .toList();
+
+      return audioBooks;
     } on DioException catch (e) {
       throw Exception(e.response?.data);
     }

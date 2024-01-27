@@ -35,8 +35,7 @@ class _CreateAudioBookState extends State<CreateAudioBook> {
     try {
       final navigator = Navigator.of(context);
 
-      await AudioBookService()
-          .createAudioBook(name, description, genre, cover!);
+      await AudioBookService.createAudioBook(name, description, genre, cover!);
 
       Fluttertoast.showToast(
           msg: "Successfully Created Audiobook",

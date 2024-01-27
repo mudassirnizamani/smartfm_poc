@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smartfm_poc/components/bottom_navigator.dart';
-import 'package:smartfm_poc/components/cusom_drawer.dart';
+import 'package:smartfm_poc/widgets/bottom_navigator.dart';
+import 'package:smartfm_poc/widgets/cusom_drawer.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});

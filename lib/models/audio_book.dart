@@ -5,7 +5,7 @@ class AudioBook {
   final String description;
   final String language;
   final String coverImage;
-  final String totalDuration;
+  final int totalDuration;
   final String audioBookId;
 
   AudioBook(
@@ -18,7 +18,7 @@ class AudioBook {
       required this.name,
       required this.totalDuration});
 
-  AudioBook fromJson(Map<String, dynamic> json) => AudioBook(
+  factory AudioBook.fromJson(Map<String, dynamic> json) => AudioBook(
       publishedAt: json["publishedAt"] as String,
       audioBookId: json["audioBookId"] as String,
       coverImage: json["coverImage"] as String,
@@ -26,7 +26,7 @@ class AudioBook {
       genre: json["genre"] as String,
       language: json["language"] as String,
       name: json["name"] as String,
-      totalDuration: json["totalDuration"] as String);
+      totalDuration: json["totalDuration"] as int);
 
   Map<String, dynamic> toJson() => {
         "publishedAt": publishedAt,

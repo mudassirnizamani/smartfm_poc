@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -28,8 +26,10 @@ class _CreateEpisodeState extends State<CreateEpisode> {
         ElevatedButton.icon(
             onPressed: pickFile,
             style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(
-                    Color.fromARGB(255, 61, 186, 228))),
+              backgroundColor: MaterialStatePropertyAll(
+                Color.fromARGB(255, 61, 186, 228),
+              ),
+            ),
             icon: const Icon(Icons.insert_drive_file_sharp),
             label: const Text(
               'Pick File',
