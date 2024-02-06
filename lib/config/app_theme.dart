@@ -50,7 +50,7 @@ class AppTheme {
       bodyLarge: TextStyle(fontSize: 18, color: Colors.white70),
     ),
     appBarTheme: const AppBarTheme(
-      color: Colors.red,
+      color: Color(0xFFBD5E51),
       iconTheme: IconThemeData(color: Colors.white),
       titleTextStyle: TextStyle(color: Colors.white),
     ),
@@ -58,7 +58,7 @@ class AppTheme {
     colorScheme: ColorScheme.fromSeed(
       brightness: Brightness.dark,
       seedColor: Colors.black,
-      primary: Colors.deepOrange,
+      primary: const Color(0xFFBD5E51),
       onPrimary: Colors.white,
       secondary: const Color(0xff03dac6),
       onSecondary: Colors.black,

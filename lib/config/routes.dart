@@ -7,4 +7,7 @@ class Routes {
   static const String profile = '/profile';
   static const String studio = '/studio';
   static const String createAudioBook = '/creteAudiBook';
+  static const String createChapter = '/creteChapter';
+  static const String audioBook = '/audioBook';
+  static const String player = '/player';
 }

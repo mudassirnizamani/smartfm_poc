@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:smartfm_poc/config/config.dart';
+import 'package:smartfm_poc/config/routes.dart';
 import 'package:smartfm_poc/models/audio_book.dart';
+import 'package:smartfm_poc/screens/audio_book_details.dart';
 import 'package:smartfm_poc/services/audio_books.dart';
 
 class AudioBooksList extends StatelessWidget {
   final String heading;
+  final String? userId;
 
-  const AudioBooksList({super.key, required this.heading});
+  const AudioBooksList({super.key, required this.heading, this.userId});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<AudioBook>>(
-      future: AudioBookService.fetchAudioBooks(),
+      future: userId == null
+          ? AudioBookService.fetchAudioBooks() as Future<List<AudioBook>>
+          : AudioBookService.fetchAudioBooksUsingUserId(userId!)
+              as Future<List<AudioBook>>,
       builder: (BuildContext context, AsyncSnapshot<List<AudioBook>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
@@ -27,7 +33,12 @@ class AudioBooksList extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
-                    onTap: () {},
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      Routes.audioBook,
+                      arguments: AudioBookParams(
+                          audioBookId: snapshot.data?[index].audioBookId ?? ""),
+                    ),
                     child: Column(
                       children: [
                         Container(
@@ -61,23 +72,6 @@ class AudioBooksList extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              // Container(
-                              //   height:
-                              //       MediaQuery.of(context).size.height * 0.25,
-                              //   width: double.infinity,
-                              //   decoration: BoxDecoration(
-                              //     borderRadius: BorderRadius.circular(20),
-                              //     gradient: LinearGradient(
-                              //       colors: [
-                              //         Colors.black.withOpacity(0.4),
-                              //         Colors.transparent,
-                              //         Colors.black.withOpacity(0.4),
-                              //       ],
-                              //       begin: Alignment.centerLeft,
-                              //       end: Alignment.centerRight,
-                              //     ),
-                              //   ),
-                              // ),
                             ],
                           ),
                         ),

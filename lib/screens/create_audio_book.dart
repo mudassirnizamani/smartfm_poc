@@ -17,6 +17,7 @@ class _CreateAudioBookState extends State<CreateAudioBook> {
   String name = '';
   String genre = '';
   String description = '';
+  String language = '';
   File? cover;
 
   Future<void> createAudioBook() async {
@@ -35,7 +36,8 @@ class _CreateAudioBookState extends State<CreateAudioBook> {
     try {
       final navigator = Navigator.of(context);
 
-      await AudioBookService.createAudioBook(name, description, genre, cover!);
+      await AudioBookService.createAudioBook(
+          name, description, genre, cover!, language);
 
       Fluttertoast.showToast(
           msg: "Successfully Created Audiobook",
@@ -78,66 +80,112 @@ class _CreateAudioBookState extends State<CreateAudioBook> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Create Audio Book'),
+          centerTitle: true,
+          backgroundColor: const Color(0xff2c3136),
+        ),
         body: SafeArea(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            children: <Widget>[
-              const SizedBox(
-                height: 50,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  TextField(
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Name',
+                    ),
+                    onChanged: (value) => setState(() {
+                      name = value;
+                    }),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text(
+                    "Choose a unique name",
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextField(
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Description',
+                    ),
+                    onChanged: (value) => setState(() {
+                      description = value;
+                    }),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text(
+                    "Choose a unique description",
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                  TextField(
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Genre',
+                    ),
+                    onChanged: (value) => setState(() {
+                      genre = value;
+                    }),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text(
+                    "Choose a unique Genre",
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextField(
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Language',
+                    ),
+                    onChanged: (value) => setState(() => language = value),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton(
+                    onPressed: pickFile,
+                    style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(250, 50)),
+                    child: const Text("Cover"),
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  ElevatedButton(
+                    onPressed: createAudioBook,
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: const Size(450, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text("Submit"),
+                  ),
+                ],
               ),
-              TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Name',
-                ),
-                onChanged: (value) => setState(() {
-                  name = value;
-                }),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Description',
-                ),
-                onChanged: (value) => setState(() {
-                  description = value;
-                }),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Genre',
-                ),
-                onChanged: (value) => setState(() {
-                  genre = value;
-                }),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                onPressed: pickFile,
-                style: ElevatedButton.styleFrom(fixedSize: const Size(250, 50)),
-                child: const Text("Cover"),
-              ),
-              ElevatedButton(
-                onPressed: createAudioBook,
-                style: ElevatedButton.styleFrom(fixedSize: const Size(250, 50)),
-                child: const Text("Submit"),
-              ),
-            ],
+            ),
           ),
         ),
       ),
-    ));
+    );
   }
 }

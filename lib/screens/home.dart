@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smartfm_poc/widgets/audio_books_list.dart';
 import 'package:smartfm_poc/widgets/bottom_navigator.dart';
 import 'package:smartfm_poc/widgets/cusom_drawer.dart';
-import 'package:smartfm_poc/config/config.dart';
 import 'package:smartfm_poc/config/routes.dart';
-import 'package:smartfm_poc/models/audio_book.dart';
-import 'package:smartfm_poc/services/audio_books.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
