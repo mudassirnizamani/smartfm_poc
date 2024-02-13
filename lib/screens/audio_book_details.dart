@@ -198,7 +198,8 @@ class _AudioBookDetailsState extends State<AudioBookDetails> {
                                     ],
                                   ))
                             ],
-                          )
+                          ),
+                          Text(snapshot.data?.description ?? "")
                         ],
                       ),
                     ],

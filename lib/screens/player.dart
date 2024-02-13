@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -8,6 +8,7 @@ import 'package:smartfm_poc/services/audio_books.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:smartfm_poc/widgets/seek_bar.dart';
 
 class PlayerParams {
   final String audioBookId;
@@ -97,7 +98,7 @@ class _PlayerState extends State<Player> {
     try {
       // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
       await _player.setAudioSource(AudioSource.uri(Uri.parse(
-          "http://localhost:4001/static/6557605c3562cab2c29e68fd/1.m3u8")));
+          "http://localhost:4001/static/65c55a4ad5f695b361b70445/1.m3u8")));
     } catch (e) {
       print("Error loading audio source: $e");
     }
@@ -137,97 +138,233 @@ class _PlayerState extends State<Player> {
                 child: Text("Error: ${snapshot.error}"),
               );
             } else {
-              return Scaffold(
-                appBar: AppBar(
-                  actions: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.heart_broken,
-                      ),
+              return SafeArea(
+                child: Scaffold(
+                  bottomNavigationBar: BottomNavigationBar(
+                    type: BottomNavigationBarType.shifting,
+                    backgroundColor: const Color(0xfffff8ee),
+                    selectedFontSize: 10,
+                    unselectedFontSize: 10,
+                    showUnselectedLabels: true,
+                    elevation: 0,
+                    selectedLabelStyle: const TextStyle(
+                      fontSize: 10,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500,
                     ),
-                  ],
-                  title: Text(snapshot.data?.name ?? ""),
-                ),
-                body: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
+                    unselectedLabelStyle: const TextStyle(
+                      fontSize: 10,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500,
+                    ),
+                    onTap: (index) async {
+                      if (index == 0) {
+                      } else if (index == 1) {
+                        showSliderDialog(
+                          context: context,
+                          title: "Adjust speed",
+                          divisions: 10,
+                          min: 0.5,
+                          max: 1.5,
+                          value: _player.speed,
+                          stream: _player.speedStream,
+                          onChanged: _player.setSpeed,
+                        );
+                      }
+                    },
+                    items: const [
+                      BottomNavigationBarItem(
+                        label: 'Chapters',
+                        icon: Icon(Icons.book, size: 25),
+                      ),
+                      BottomNavigationBarItem(
+                        label: "Speed",
+                        icon: Icon(Icons.speed),
+                      ),
+                    ],
+                  ),
+                  body: SingleChildScrollView(
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.88,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              "${Config.apiBaseUrl}/${snapshot.data?.coverImage}"),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: 20,
+                          sigmaY: 20,
+                        ),
                         child: Container(
                           alignment: Alignment.center,
+                          color: Colors.black.withOpacity(0.1),
                           child: Column(
                             children: [
-                              Container(
-                                margin: const EdgeInsets.only(
-                                  bottom: 20,
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 20,
+                                  right: 10,
+                                  left: 10,
                                 ),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(
+                                            Icons.arrow_downward_rounded),
+                                        iconSize: 25,
+                                        color: Colors.grey[200],
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.share),
+                                        iconSize: 20,
+                                        color: Colors.grey[200],
+                                        onPressed: () {},
+                                      )
+                                    ]),
+                              ),
+                              SizedBox(
                                 height:
-                                    MediaQuery.of(context).size.height * 0.32,
+                                    MediaQuery.of(context).size.height * 0.38,
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.network(
-                                    "${Config.apiBaseUrl}/${snapshot.data?.coverImage}",
-                                    fit: BoxFit.fill,
-                                  ),
+                                child: Stack(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 20),
+                                      child: Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          boxShadow: <BoxShadow>[
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.3),
+                                              blurRadius: 25,
+                                              offset: const Offset(8, 8),
+                                              spreadRadius: 3,
+                                            ),
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.3),
+                                              blurRadius: 25,
+                                              offset: const Offset(-8, -8),
+                                              spreadRadius: 3,
+                                            )
+                                          ],
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          child: Image.network(
+                                            "${Config.apiBaseUrl}/${snapshot.data?.coverImage}",
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    // Container(
+                                    //   height: double.infinity,
+                                    //   width: double.infinity,
+                                    //   decoration: BoxDecoration(
+                                    //     borderRadius: BorderRadius.circular(20),
+                                    //     gradient: LinearGradient(
+                                    //       colors: [
+                                    //         Colors.black.withOpacity(0.3),
+                                    //         Colors.transparent,
+                                    //         Colors.black.withOpacity(0.3),
+                                    //       ],
+                                    //       begin: Alignment.centerLeft,
+                                    //       end: Alignment.centerRight,
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                snapshot.data?.name ?? "",
+                                style: const TextStyle(
+                                  fontSize: 30,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                               const SizedBox(
                                 height: 5,
                               ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 10, right: 10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "By ${snapshot.data?.name}",
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    OutlinedButton(
-                                      onPressed: () {},
-                                      child: const Text("Go To Show"),
-                                    )
-                                  ],
+                              Text(
+                                "By ${snapshot.data?.genre}",
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              StreamBuilder<PositionData>(
-                                stream: _positionDataStream,
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<PositionData> snapshot) {
-                                  final positionData = snapshot.data;
-                                  return SeekBar(
-                                    duration:
-                                        positionData?.duration ?? Duration.zero,
-                                    position:
-                                        positionData?.position ?? Duration.zero,
-                                    bufferedPosition:
-                                        positionData?.bufferedPosition ??
-                                            Duration.zero,
-                                    onChangeEnd: _player.seek,
-                                  );
-                                },
-                              ),
                               const SizedBox(
-                                height: 15,
+                                height: 8,
                               ),
-                              ControlButtons(_player),
-                              AudioControlButtons(player: _player)
+                              Expanded(
+                                child: Container(
+                                  width: double.infinity,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xfffff8ee),
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(50),
+                                      topRight: Radius.circular(50),
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.only(
+                                    left: 30,
+                                    right: 30,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      const Text(
+                                        "Chapter 2",
+                                        style: TextStyle(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      StreamBuilder<PositionData>(
+                                        stream: _positionDataStream,
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<PositionData>
+                                                snapshot) {
+                                          final positionData = snapshot.data;
+                                          return SeekBar(
+                                            duration: positionData?.duration ??
+                                                Duration.zero,
+                                            position: positionData?.position ??
+                                                Duration.zero,
+                                            bufferedPosition: positionData
+                                                    ?.bufferedPosition ??
+                                                Duration.zero,
+                                            onChangeEnd: _player.seek,
+                                          );
+                                        },
+                                      ),
+                                      ControlButtons(_player),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               );
@@ -238,7 +375,6 @@ class _PlayerState extends State<Player> {
   }
 }
 
-/// Displays the play/pause button and volume/speed sliders.
 class ControlButtons extends StatelessWidget {
   final AudioPlayer player;
 
@@ -253,9 +389,14 @@ class ControlButtons extends StatelessWidget {
           onPressed: () {},
           icon: const Icon(Icons.skip_previous_outlined),
           iconSize: 26,
+          color: Colors.black,
         ),
         IconButton(
-          onPressed: () {},
+          color: Colors.black,
+          onPressed: () {
+            player.seek(
+                Duration(milliseconds: player.position.inMicroseconds + 10));
+          },
           icon: const Icon(Icons.forward_10_outlined),
           iconSize: 26,
         ),
@@ -275,6 +416,7 @@ class ControlButtons extends StatelessWidget {
               );
             } else if (playing != true) {
               return IconButton(
+                color: Colors.black,
                 icon: const Icon(Icons.play_arrow),
                 iconSize: 64.0,
                 onPressed: player.play,
@@ -283,23 +425,30 @@ class ControlButtons extends StatelessWidget {
               return IconButton(
                 icon: const Icon(Icons.pause),
                 iconSize: 64.0,
+                color: Colors.black,
                 onPressed: player.pause,
               );
             } else {
               return IconButton(
                 icon: const Icon(Icons.replay),
                 iconSize: 64.0,
+                color: Colors.black,
                 onPressed: () => player.seek(Duration.zero),
               );
             }
           },
         ),
         IconButton(
-          onPressed: () {},
+          color: Colors.black,
+          onPressed: () {
+            player.seek(
+                Duration(milliseconds: player.position.inMicroseconds + 10));
+          },
           icon: const Icon(Icons.replay_10_outlined),
           iconSize: 26,
         ),
         IconButton(
+          color: Colors.black,
           onPressed: () {},
           icon: const Icon(Icons.skip_next_outlined),
           iconSize: 26,
@@ -307,195 +456,4 @@ class ControlButtons extends StatelessWidget {
       ],
     );
   }
-}
-
-class AudioControlButtons extends StatelessWidget {
-  final AudioPlayer player;
-
-  const AudioControlButtons({required this.player, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          icon: const Icon(Icons.volume_up),
-          onPressed: () {
-            showSliderDialog(
-              context: context,
-              title: "Adjust volume",
-              divisions: 10,
-              min: 0.0,
-              max: 1.0,
-              value: player.volume,
-              stream: player.volumeStream,
-              onChanged: player.setVolume,
-            );
-          },
-        ),
-        StreamBuilder<double>(
-          stream: player.speedStream,
-          builder: (context, snapshot) => IconButton(
-            icon: Text("${snapshot.data?.toStringAsFixed(1)}x",
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-            onPressed: () {
-              showSliderDialog(
-                context: context,
-                title: "Adjust speed",
-                divisions: 10,
-                min: 0.5,
-                max: 1.5,
-                value: player.speed,
-                stream: player.speedStream,
-                onChanged: player.setSpeed,
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class SeekBar extends StatefulWidget {
-  final Duration duration;
-  final Duration position;
-  final Duration bufferedPosition;
-  final ValueChanged<Duration>? onChanged;
-  final ValueChanged<Duration>? onChangeEnd;
-
-  const SeekBar({
-    super.key,
-    required this.duration,
-    required this.position,
-    required this.bufferedPosition,
-    this.onChanged,
-    this.onChangeEnd,
-  });
-
-  @override
-  SeekBarState createState() => SeekBarState();
-}
-
-class SeekBarState extends State<SeekBar> {
-  double? _dragValue;
-  late SliderThemeData _sliderThemeData;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    _sliderThemeData = SliderTheme.of(context).copyWith(
-      trackHeight: 2.0,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        SliderTheme(
-          data: _sliderThemeData.copyWith(
-            thumbShape: HiddenThumbComponentShape(),
-            activeTrackColor: Colors.blue.shade100,
-            inactiveTrackColor: Colors.grey.shade300,
-          ),
-          child: ExcludeSemantics(
-            child: Slider(
-              min: 0.0,
-              max: widget.duration.inMilliseconds.toDouble(),
-              value: min(widget.bufferedPosition.inMilliseconds.toDouble(),
-                  widget.duration.inMilliseconds.toDouble()),
-              onChanged: (value) {
-                setState(() {
-                  _dragValue = value;
-                });
-                if (widget.onChanged != null) {
-                  widget.onChanged!(Duration(milliseconds: value.round()));
-                }
-              },
-              onChangeEnd: (value) {
-                if (widget.onChangeEnd != null) {
-                  widget.onChangeEnd!(Duration(milliseconds: value.round()));
-                }
-                _dragValue = null;
-              },
-            ),
-          ),
-        ),
-        SliderTheme(
-          data: _sliderThemeData.copyWith(
-            inactiveTrackColor: Colors.transparent,
-            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6.5),
-            thumbColor: Colors.grey[300],
-          ),
-          child: Slider(
-            min: 0.0,
-            max: widget.duration.inMilliseconds.toDouble(),
-            value: min(_dragValue ?? widget.position.inMilliseconds.toDouble(),
-                widget.duration.inMilliseconds.toDouble()),
-            onChanged: (value) {
-              setState(() {
-                _dragValue = value;
-              });
-              if (widget.onChanged != null) {
-                widget.onChanged!(Duration(milliseconds: value.round()));
-              }
-            },
-            onChangeEnd: (value) {
-              if (widget.onChangeEnd != null) {
-                widget.onChangeEnd!(Duration(milliseconds: value.round()));
-              }
-              _dragValue = null;
-            },
-          ),
-        ),
-        Positioned(
-          right: 16.0,
-          bottom: 0.0,
-          child: Text(
-              RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$')
-                      .firstMatch("$_remaining")
-                      ?.group(1) ??
-                  '$_remaining',
-              style: Theme.of(context).textTheme.bodySmall),
-        ),
-        Positioned(
-          left: 16.0,
-          bottom: 0.0,
-          child: Text(
-              RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$')
-                      .firstMatch("$_current")
-                      ?.group(1) ??
-                  '$_current',
-              style: Theme.of(context).textTheme.bodySmall),
-        ),
-      ],
-    );
-  }
-
-  Duration get _remaining => widget.duration - widget.position;
-  Duration get _current => widget.duration;
-}
-
-class HiddenThumbComponentShape extends SliderComponentShape {
-  @override
-  Size getPreferredSize(bool isEnabled, bool isDiscrete) => Size.zero;
-
-  @override
-  void paint(
-    PaintingContext context,
-    Offset center, {
-    required Animation<double> activationAnimation,
-    required Animation<double> enableAnimation,
-    required bool isDiscrete,
-    required TextPainter labelPainter,
-    required RenderBox parentBox,
-    required SliderThemeData sliderTheme,
-    required TextDirection textDirection,
-    required double value,
-    required double textScaleFactor,
-    required Size sizeWithOverflow,
-  }) {}
 }

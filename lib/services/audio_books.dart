@@ -40,7 +40,7 @@ class AudioBookService {
 
     try {
       final res = await Api.dio.post('/audiobook', data: formData);
-
+      print("Res Data: $res.data");
       return CreateAudioBookResponse.fromJson(res.data);
     } on DioException catch (e) {
       throw Exception(e.response?.data);
@@ -87,8 +87,6 @@ class AudioBookService {
       String userId) async {
     try {
       final res = await Api.dio.get('/audiobooks/$userId');
-
-      print("audioBooks ${res.data["audioBooks"]}");
 
       if (res.data["audioBooks"] == null) {
         return [];

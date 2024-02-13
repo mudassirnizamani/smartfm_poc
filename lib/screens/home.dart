@@ -21,19 +21,15 @@ class _HomeState extends State<Home> {
         actions: <Widget>[
           IconButton(
             icon: IconButton(
-              icon: const Icon(Icons.shopping_cart),
-              onPressed: () {},
+              icon: const Icon(Icons.search),
+              onPressed: () => Navigator.pushNamed(context, Routes.search),
             ),
             tooltip: 'Open shopping cart',
             onPressed: () {},
           ),
         ],
-        leading: IconButton(
-          icon: const Icon(Icons.account_circle_rounded),
-          onPressed: () {
-            Navigator.pushNamed(context, Routes.profile);
-          },
-        ),
+        automaticallyImplyLeading: false,
+        title: const Text("Hello Mudassir!"),
       ),
       drawer: const CustomDrawer(),
       body: const AudioBooksList(

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smartfm_poc/widgets/cusom_drawer.dart';
-
 import '../widgets/bottom_navigator.dart';
 
 class Library extends StatefulWidget {
@@ -16,7 +14,6 @@ class _LibraryState extends State<Library> {
     return Scaffold(
       bottomNavigationBar: const BottomNavigator(),
       appBar: AppBar(title: const Text('Library')),
-      drawer: const CustomDrawer(),
       body: const Center(
         child: Text('Library'),
       ),
