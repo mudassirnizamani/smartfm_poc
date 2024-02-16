@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:smartfm_poc/models/episode.dart';
 import 'package:smartfm_poc/models/user.dart';
 import 'package:smartfm_poc/services/api.dart';
 import 'package:smartfm_poc/models/audio_book.dart';
@@ -40,26 +41,25 @@ class AudioBookService {
 
     try {
       final res = await Api.dio.post('/audiobook', data: formData);
-      print("Res Data: $res.data");
       return CreateAudioBookResponse.fromJson(res.data);
     } on DioException catch (e) {
       throw Exception(e.response?.data);
     }
   }
 
-  static Future<void> createChapter(
-      String title, String audioBookId, File chapter) async {
+  static Future<void> createEpisode(
+      String title, String audioBookId, File episode) async {
     FormData data = FormData.fromMap({
       'title': title,
       'audioBookId': audioBookId,
       'audioFile': await MultipartFile.fromFile(
-        chapter.path,
-        filename: chapter.uri.toString(),
+        episode.path,
+        filename: episode.uri.toString(),
       )
     });
 
     try {
-      await Api.dio.post('/chapter', data: data);
+      await Api.dio.post('/episode', data: data);
     } on DioException catch (e) {
       throw Exception(e.response?.data);
     }
@@ -109,6 +109,25 @@ class AudioBookService {
       return AudioBook.fromJson(res.data["audioBook"]);
     } on DioException catch (e) {
       throw Exception(e.response?.data);
+    }
+  }
+
+  static Future<List<Episode>> fetchEpisodesUsingAudioBookId(
+      String audioBookId) async {
+    try {
+      final res = await Api.dio.get("/episodes/$audioBookId");
+
+      if (res.data["episodes"] == null) {
+        return [];
+      }
+
+      final List<Episode> chapters = res.data["episodes"]
+          .map<Episode>((json) => Episode.fromJson(json))
+          .toList();
+
+      return chapters;
+    } on DioException {
+      rethrow;
     }
   }
 }

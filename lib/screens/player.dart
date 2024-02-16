@@ -4,16 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:smartfm_poc/config/config.dart';
 import 'package:smartfm_poc/models/audio_book.dart';
-import 'package:smartfm_poc/services/audio_books.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:smartfm_poc/models/episode.dart';
 import 'package:smartfm_poc/widgets/seek_bar.dart';
 
 class PlayerParams {
-  final String audioBookId;
+  final Episode? episode;
+  final AudioBook audioBook;
 
-  PlayerParams({required this.audioBookId});
+  PlayerParams({required this.episode, required this.audioBook});
 }
 
 class PositionData {
@@ -94,14 +95,6 @@ class _PlayerState extends State<Player> {
         onError: (Object e, StackTrace stackTrace) {
       print('A stream error occurred: $e');
     });
-
-    try {
-      // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
-      await _player.setAudioSource(AudioSource.uri(Uri.parse(
-          "http://localhost:4001/static/65c55a4ad5f695b361b70445/1.m3u8")));
-    } catch (e) {
-      print("Error loading audio source: $e");
-    }
   }
 
   @override
@@ -110,8 +103,6 @@ class _PlayerState extends State<Player> {
     super.dispose();
   }
 
-  /// Collects the data useful for displaying in a seek bar, using a handy
-  /// feature of rx_dart to combine the 3 streams of interest into one.
   Stream<PositionData> get _positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
           _player.positionStream,
@@ -124,253 +115,230 @@ class _PlayerState extends State<Player> {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)?.settings.arguments as PlayerParams;
 
-    return FutureBuilder<AudioBook?>(
-      future: AudioBookService.fetchAudioBookUsingId(args.audioBookId),
-      builder: ((BuildContext context, AsyncSnapshot<AudioBook?> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return const Center(
-              child: Text("loading..."),
-            );
-          default:
-            if (snapshot.hasError) {
-              return Center(
-                child: Text("Error: ${snapshot.error}"),
-              );
-            } else {
-              return SafeArea(
-                child: Scaffold(
-                  bottomNavigationBar: BottomNavigationBar(
-                    type: BottomNavigationBarType.shifting,
-                    backgroundColor: const Color(0xfffff8ee),
-                    selectedFontSize: 10,
-                    unselectedFontSize: 10,
-                    showUnselectedLabels: true,
-                    elevation: 0,
-                    selectedLabelStyle: const TextStyle(
-                      fontSize: 10,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                    ),
-                    unselectedLabelStyle: const TextStyle(
-                      fontSize: 10,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                    ),
-                    onTap: (index) async {
-                      if (index == 0) {
-                      } else if (index == 1) {
-                        showSliderDialog(
-                          context: context,
-                          title: "Adjust speed",
-                          divisions: 10,
-                          min: 0.5,
-                          max: 1.5,
-                          value: _player.speed,
-                          stream: _player.speedStream,
-                          onChanged: _player.setSpeed,
-                        );
-                      }
-                    },
-                    items: const [
-                      BottomNavigationBarItem(
-                        label: 'Chapters',
-                        icon: Icon(Icons.book, size: 25),
-                      ),
-                      BottomNavigationBarItem(
-                        label: "Speed",
-                        icon: Icon(Icons.speed),
-                      ),
-                    ],
-                  ),
-                  body: SingleChildScrollView(
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.88,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(
-                              "${Config.apiBaseUrl}/${snapshot.data?.coverImage}"),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(
-                          sigmaX: 20,
-                          sigmaY: 20,
-                        ),
-                        child: Container(
-                          alignment: Alignment.center,
-                          color: Colors.black.withOpacity(0.1),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 20,
-                                  right: 10,
-                                  left: 10,
-                                ),
-                                child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(
-                                            Icons.arrow_downward_rounded),
-                                        iconSize: 25,
-                                        color: Colors.grey[200],
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.share),
-                                        iconSize: 20,
-                                        color: Colors.grey[200],
-                                        onPressed: () {},
-                                      )
-                                    ]),
-                              ),
-                              SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.38,
-                                width: MediaQuery.of(context).size.width * 0.45,
-                                child: Stack(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 20),
-                                      child: Container(
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          boxShadow: <BoxShadow>[
-                                            BoxShadow(
-                                              color:
-                                                  Colors.black.withOpacity(0.3),
-                                              blurRadius: 25,
-                                              offset: const Offset(8, 8),
-                                              spreadRadius: 3,
-                                            ),
-                                            BoxShadow(
-                                              color:
-                                                  Colors.black.withOpacity(0.3),
-                                              blurRadius: 25,
-                                              offset: const Offset(-8, -8),
-                                              spreadRadius: 3,
-                                            )
-                                          ],
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          child: Image.network(
-                                            "${Config.apiBaseUrl}/${snapshot.data?.coverImage}",
-                                            fit: BoxFit.fill,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                    // Container(
-                                    //   height: double.infinity,
-                                    //   width: double.infinity,
-                                    //   decoration: BoxDecoration(
-                                    //     borderRadius: BorderRadius.circular(20),
-                                    //     gradient: LinearGradient(
-                                    //       colors: [
-                                    //         Colors.black.withOpacity(0.3),
-                                    //         Colors.transparent,
-                                    //         Colors.black.withOpacity(0.3),
-                                    //       ],
-                                    //       begin: Alignment.centerLeft,
-                                    //       end: Alignment.centerRight,
-                                    //     ),
-                                    //   ),
-                                    // ),
-                                  ],
-                                ),
-                              ),
-                              Text(
-                                snapshot.data?.name ?? "",
-                                style: const TextStyle(
-                                  fontSize: 30,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "By ${snapshot.data?.genre}",
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  width: double.infinity,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xfffff8ee),
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(50),
-                                      topRight: Radius.circular(50),
-                                    ),
-                                  ),
-                                  padding: const EdgeInsets.only(
-                                    left: 30,
-                                    right: 30,
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      const Text(
-                                        "Chapter 2",
-                                        style: TextStyle(
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      StreamBuilder<PositionData>(
-                                        stream: _positionDataStream,
-                                        builder: (BuildContext context,
-                                            AsyncSnapshot<PositionData>
-                                                snapshot) {
-                                          final positionData = snapshot.data;
-                                          return SeekBar(
-                                            duration: positionData?.duration ??
-                                                Duration.zero,
-                                            position: positionData?.position ??
-                                                Duration.zero,
-                                            bufferedPosition: positionData
-                                                    ?.bufferedPosition ??
-                                                Duration.zero,
-                                            onChangeEnd: _player.seek,
-                                          );
-                                        },
-                                      ),
-                                      ControlButtons(_player),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+    if (args.episode != null) {
+      _player.setAudioSource(AudioSource.uri(
+          Uri.parse("${Config.apiBaseUrl}/${args.episode?.url}")));
+    }
+
+    return SafeArea(
+      child: Scaffold(
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.shifting,
+          backgroundColor: const Color(0xfffff8ee),
+          selectedFontSize: 10,
+          unselectedFontSize: 10,
+          showUnselectedLabels: true,
+          elevation: 0,
+          selectedLabelStyle: const TextStyle(
+            fontSize: 10,
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w500,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontSize: 10,
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w500,
+          ),
+          onTap: (index) async {
+            if (index == 0) {
+            } else if (index == 1) {
+              showSliderDialog(
+                context: context,
+                title: "Adjust speed",
+                divisions: 10,
+                min: 0.5,
+                max: 1.5,
+                value: _player.speed,
+                stream: _player.speedStream,
+                onChanged: _player.setSpeed,
               );
             }
-        }
-      }),
+          },
+          items: const [
+            BottomNavigationBarItem(
+              label: 'Chapters',
+              icon: Icon(Icons.book, size: 25),
+            ),
+            BottomNavigationBarItem(
+              label: "Speed",
+              icon: Icon(Icons.speed),
+            ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.88,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(
+                    "${Config.apiBaseUrl}/${args.audioBook.coverImage}"),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: 20,
+                sigmaY: 20,
+              ),
+              child: Container(
+                alignment: Alignment.center,
+                color: Colors.black.withOpacity(0.1),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 20,
+                        right: 10,
+                        left: 10,
+                      ),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.arrow_downward_rounded),
+                              iconSize: 25,
+                              color: Colors.grey[200],
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.share),
+                              iconSize: 20,
+                              color: Colors.grey[200],
+                              onPressed: () {},
+                            )
+                          ]),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.38,
+                      width: MediaQuery.of(context).size.width * 0.45,
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20),
+                            child: Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.3),
+                                    blurRadius: 25,
+                                    offset: const Offset(8, 8),
+                                    spreadRadius: 3,
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.3),
+                                    blurRadius: 25,
+                                    offset: const Offset(-8, -8),
+                                    spreadRadius: 3,
+                                  )
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.network(
+                                  "${Config.apiBaseUrl}/${args.audioBook.coverImage}",
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                          )
+                          // Container(
+                          //   height: double.infinity,
+                          //   width: double.infinity,
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(20),
+                          //     gradient: LinearGradient(
+                          //       colors: [
+                          //         Colors.black.withOpacity(0.3),
+                          //         Colors.transparent,
+                          //         Colors.black.withOpacity(0.3),
+                          //       ],
+                          //       begin: Alignment.centerLeft,
+                          //       end: Alignment.centerRight,
+                          //     ),
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      args.audioBook.name,
+                      style: const TextStyle(
+                        fontSize: 30,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      "By ${args.audioBook.genre}",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: const BoxDecoration(
+                          color: Color(0xfffff8ee),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(50),
+                            topRight: Radius.circular(50),
+                          ),
+                        ),
+                        padding: const EdgeInsets.only(
+                          left: 30,
+                          right: 30,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            const Text(
+                              "Chapter 2",
+                              style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black,
+                              ),
+                            ),
+                            StreamBuilder<PositionData>(
+                              stream: _positionDataStream,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<PositionData> snapshot) {
+                                final positionData = snapshot.data;
+                                return SeekBar(
+                                  duration:
+                                      positionData?.duration ?? Duration.zero,
+                                  position:
+                                      positionData?.position ?? Duration.zero,
+                                  bufferedPosition:
+                                      positionData?.bufferedPosition ??
+                                          Duration.zero,
+                                  onChangeEnd: _player.seek,
+                                );
+                              },
+                            ),
+                            ControlButtons(_player),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

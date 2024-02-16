@@ -8,17 +8,17 @@ import 'package:smartfm_poc/config/routes.dart';
 import 'package:smartfm_poc/models/audio_book.dart';
 import 'package:smartfm_poc/services/audio_books.dart';
 
-class CreateChapter extends StatefulWidget {
-  const CreateChapter({super.key});
+class CreateEpisode extends StatefulWidget {
+  const CreateEpisode({super.key});
 
   @override
-  State<CreateChapter> createState() => _CreateChapterState();
+  State<CreateEpisode> createState() => _CreateEpisodeState();
 }
 
-class _CreateChapterState extends State<CreateChapter> {
+class _CreateEpisodeState extends State<CreateEpisode> {
   String title = '';
   String? selectedBookId;
-  File? chapter;
+  File? episode;
 
   void updateSelectedBookId(String id) {
     setState(() {
@@ -26,15 +26,15 @@ class _CreateChapterState extends State<CreateChapter> {
     });
   }
 
-  Future<void> pickChapterFile() async {
+  Future<void> pickEpisodeFile() async {
     FilePickerResult? result = await FilePicker.platform
         .pickFiles(allowedExtensions: ["mp3", "flac"], type: FileType.custom);
 
     if (result != null) {
-      chapter = File(result.files.single.path!);
+      episode = File(result.files.single.path!);
     } else {
       Fluttertoast.showToast(
-        msg: "Pick a chapter file",
+        msg: "Pick a Episode file",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
         timeInSecForIosWeb: 1,
@@ -45,13 +45,12 @@ class _CreateChapterState extends State<CreateChapter> {
     }
   }
 
-  Future<void> createChapter() async {
+  Future<void> createEpisode() async {
     final navigator = Navigator.of(context);
-    print("ID $title");
     if (title.isEmpty ||
         selectedBookId == null ||
         selectedBookId!.isEmpty ||
-        chapter == null) {
+        episode == null) {
       Fluttertoast.showToast(
         msg: "Fill the details correctly",
         toastLength: Toast.LENGTH_SHORT,
@@ -65,11 +64,10 @@ class _CreateChapterState extends State<CreateChapter> {
     }
 
     try {
-      await AudioBookService.createChapter(title, selectedBookId!, chapter!);
+      await AudioBookService.createEpisode(title, selectedBookId!, episode!);
 
       navigator.pushNamed(Routes.studio);
     } catch (e) {
-      print(e);
       Fluttertoast.showToast(
         msg: "Something went wrong",
         toastLength: Toast.LENGTH_SHORT,
@@ -87,7 +85,7 @@ class _CreateChapterState extends State<CreateChapter> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Chapter'),
+        title: const Text('Create Episode'),
         centerTitle: true,
         backgroundColor: const Color(0xff2c3136),
       ),
@@ -118,9 +116,9 @@ class _CreateChapterState extends State<CreateChapter> {
                 height: 20,
               ),
               ElevatedButton(
-                onPressed: pickChapterFile,
+                onPressed: pickEpisodeFile,
                 style: ElevatedButton.styleFrom(fixedSize: const Size(250, 50)),
-                child: const Text("Pick Chapter"),
+                child: const Text("Pick Episode"),
               ),
               const SizedBox(
                 height: 20,
@@ -133,7 +131,7 @@ class _CreateChapterState extends State<CreateChapter> {
                 height: 40,
               ),
               ElevatedButton(
-                onPressed: createChapter,
+                onPressed: createEpisode,
                 style: ElevatedButton.styleFrom(fixedSize: const Size(350, 50)),
                 child: const Text("Submit"),
               )

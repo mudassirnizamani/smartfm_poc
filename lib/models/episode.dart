@@ -1,27 +1,27 @@
-class Chapter {
+class Episode {
   final String audioBookId;
   final int chapterNumber;
-  final int chapterDuration;
+  final double chapterDuration;
   final String url;
   final String title;
-  final String chapterId;
+  final String episodeId;
 
-  Chapter({
+  Episode({
     required this.audioBookId,
     required this.chapterNumber,
     required this.chapterDuration,
     required this.url,
     required this.title,
-    required this.chapterId,
+    required this.episodeId,
   });
 
-  Chapter fromJson(Map<String, dynamic> json) => Chapter(
+  factory Episode.fromJson(Map<String, dynamic> json) => Episode(
         audioBookId: json["audioBookId"] as String,
         chapterNumber: json["chapterNumber"] as int,
-        chapterDuration: json["chapterDuration"] as int,
+        chapterDuration: json["chapterDuration"] as double,
         url: json["url"] as String,
         title: json["title"] as String,
-        chapterId: json["chapterId"] as String,
+        episodeId: json["episodeId"] as String,
       );
 
   Map<String, dynamic> toJson() => {
@@ -30,6 +30,6 @@ class Chapter {
         "chapterDuration": chapterDuration,
         "url": url,
         "title": title,
-        "chapterId": chapterId,
+        "episodeId": episodeId,
       };
 }

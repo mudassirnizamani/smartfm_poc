@@ -40,7 +40,7 @@ class App extends StatelessWidget {
         Routes.createAudioBook: (context) => const CreateAudioBook(),
         Routes.audioBook: (context) => const AudioBookDetails(),
         Routes.player: (context) => const Player(),
-        Routes.createChapter: (context) => const CreateChapter()
+        Routes.createEpisode: (context) => const CreateEpisode()
       },
     );
   }

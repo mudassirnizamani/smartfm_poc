@@ -27,7 +27,15 @@ class _ProfileState extends State<Profile> {
                 actions: <Widget>[
                   IconButton(
                     icon: IconButton(
-                      icon: const Icon(Icons.search),
+                      icon: const Icon(Icons.edit),
+                      onPressed: () {},
+                    ),
+                    tooltip: 'Search',
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: IconButton(
+                      icon: const Icon(Icons.settings),
                       onPressed: () {},
                     ),
                     tooltip: 'Search',
@@ -69,19 +77,8 @@ class _ProfileState extends State<Profile> {
                                   Text(
                                     snapshot.data?.name ?? "",
                                     style: const TextStyle(
-                                      fontSize: 36,
+                                      fontSize: 26,
                                       fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {},
-                                    child: const Text(
-                                      "EDIT",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xffc44536),
-                                        fontSize: 24,
-                                      ),
                                     ),
                                   ),
                                   Container(
@@ -182,12 +179,12 @@ class _ProfileState extends State<Profile> {
 }
 
 const kTitleStyle = TextStyle(
-  fontSize: 20,
+  fontSize: 18,
   color: Colors.grey,
   fontWeight: FontWeight.w700,
 );
 
 const kSubtitleStyle = TextStyle(
-  fontSize: 26,
+  fontSize: 20,
   fontWeight: FontWeight.w700,
 );

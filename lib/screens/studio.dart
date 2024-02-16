@@ -76,7 +76,7 @@ class Publish extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, Routes.createChapter);
+                  Navigator.pushNamed(context, Routes.createEpisode);
                 },
                 style: OutlinedButton.styleFrom(
                   elevation: 3,
@@ -85,7 +85,7 @@ class Publish extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: const Text("Create Chapter"),
+                child: const Text("Create Episode"),
               ),
               const SizedBox(
                 height: 30,
