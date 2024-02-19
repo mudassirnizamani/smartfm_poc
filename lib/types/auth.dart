@@ -1,30 +1,43 @@
 import 'package:smartfm_poc/models/user.dart';
 
-class AuthenticateResponse {
-  AuthenticateResponse({
-    this.user,
-    this.type,
-  });
+class AuthenticateResponseData {
+  AuthenticateResponseData({required this.type, required this.user});
 
-  User? user;
-  String? type;
+  final User user;
+  final String type;
+
+  factory AuthenticateResponseData.fromJson(Map<String, dynamic> json) =>
+      AuthenticateResponseData(
+          type: json["type"] as String,
+          user: User.fromJson(json["user"] as Map<String, dynamic>));
+}
+
+class AuthenticateResponse {
+  AuthenticateResponse({required this.success, required this.data});
+
+  bool success;
+  AuthenticateResponseData data;
 
   factory AuthenticateResponse.fromJson(Map<String, dynamic> json) =>
       AuthenticateResponse(
-        user: User.fromJson(json["user"]),
-        type: json["type"],
+        success: json["Success"] as bool,
+        data: AuthenticateResponseData.fromJson(
+            json["Data"] as Map<String, dynamic>),
       );
 }
 
 class GenerateOtpResponse {
   GenerateOtpResponse({
-    required this.otp,
+    required this.success,
+    required this.data,
   });
 
-  int otp;
+  bool success;
+  int data;
 
   factory GenerateOtpResponse.fromJson(Map<String, dynamic> json) =>
       GenerateOtpResponse(
-        otp: json["otp"] as int,
+        success: json["Success"] as bool,
+        data: json["Data"] as int,
       );
 }

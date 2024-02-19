@@ -264,7 +264,7 @@ class _PlayerState extends State<Player> {
                       ),
                     ),
                     Text(
-                      args.audioBook.name,
+                      args.audioBook.title,
                       style: const TextStyle(
                         fontSize: 30,
                         color: Colors.white,

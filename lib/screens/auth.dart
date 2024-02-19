@@ -3,7 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:pinput/pinput.dart';
 import 'package:smartfm_poc/config/routes.dart';
-import 'package:smartfm_poc/services/auth.dart';
+import 'package:smartfm_poc/services/auth_service.dart';
 import 'package:smartfm_poc/storage/user_storage.dart';
 
 enum VerificationType { phoneNumber, otp }
@@ -48,7 +48,7 @@ class _MyWidgetState extends State<Auth> {
         final authenticateResponse =
             await AuthService().authenticate(_phoneNumber, _otp);
 
-        await UserStorage.saveUser(authenticateResponse.user);
+        await UserStorage.saveUser(authenticateResponse.data.user);
 
         Fluttertoast.showToast(
             msg: "Successfully logged in",
@@ -65,10 +65,11 @@ class _MyWidgetState extends State<Auth> {
 
       final generateOtpResponse = await AuthService().generateOtp(_phoneNumber);
       setState(() {
-        _userOto = generateOtpResponse.otp.toString();
+        _userOto = generateOtpResponse.data.toString();
         _verificationType = VerificationType.otp;
       });
     } catch (e) {
+      print(e);
       Fluttertoast.showToast(
           msg: "Something went wrong",
           toastLength: Toast.LENGTH_SHORT,

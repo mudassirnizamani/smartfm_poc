@@ -3,7 +3,7 @@ import 'package:smartfm_poc/config/config.dart';
 import 'package:smartfm_poc/config/routes.dart';
 import 'package:smartfm_poc/models/audio_book.dart';
 import 'package:smartfm_poc/screens/audio_book_details.dart';
-import 'package:smartfm_poc/services/audio_books.dart';
+import 'package:smartfm_poc/services/books_service.dart';
 
 class AudioBooksList extends StatelessWidget {
   final String heading;
@@ -15,8 +15,8 @@ class AudioBooksList extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder<List<AudioBook>>(
       future: userId == null
-          ? AudioBookService.fetchAudioBooks() as Future<List<AudioBook>>
-          : AudioBookService.fetchAudioBooksUsingUserId(userId!)
+          ? BooksService.fetchAudioBooks() as Future<List<AudioBook>>
+          : BooksService.fetchAudioBooksUsingUserId(userId!)
               as Future<List<AudioBook>>,
       builder: (BuildContext context, AsyncSnapshot<List<AudioBook>> snapshot) {
         switch (snapshot.connectionState) {
@@ -37,7 +37,7 @@ class AudioBooksList extends StatelessWidget {
                       context,
                       Routes.audioBook,
                       arguments: AudioBookParams(
-                          audioBookId: snapshot.data?[index].audioBookId ?? ""),
+                          audioBookId: snapshot.data?[index].bookId ?? ""),
                     ),
                     child: Column(
                       children: [
@@ -75,9 +75,8 @@ class AudioBooksList extends StatelessWidget {
                             ],
                           ),
                         ),
-                        // const SizedBox(height: 16),
                         Text(
-                          snapshot.data?[index].name ?? "",
+                          snapshot.data?[index].title ?? "",
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w700,

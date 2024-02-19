@@ -5,8 +5,10 @@ import 'package:smartfm_poc/config/routes.dart';
 import 'package:smartfm_poc/models/audio_book.dart';
 import 'package:smartfm_poc/models/episode.dart';
 import 'package:smartfm_poc/screens/player.dart';
-import 'package:smartfm_poc/services/audio_books.dart';
+import 'package:smartfm_poc/services/books_service.dart';
+import 'package:smartfm_poc/services/episodes_service.dart';
 import 'package:smartfm_poc/services/user_service.dart';
+import 'package:smartfm_poc/services/users_library_service.dart';
 
 class AudioBookParams {
   final String audioBookId;
@@ -27,7 +29,7 @@ class _AudioBookDetailsState extends State<AudioBookDetails> {
     final args = ModalRoute.of(context)!.settings.arguments as AudioBookParams;
 
     return FutureBuilder<AudioBook?>(
-      future: AudioBookService.fetchAudioBookUsingId(args.audioBookId),
+      future: BooksService.fetchAudioBookUsingId(args.audioBookId),
       builder: (context, AsyncSnapshot<AudioBook?> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
@@ -42,7 +44,7 @@ class _AudioBookDetailsState extends State<AudioBookDetails> {
                 length: 2,
                 child: Scaffold(
                   appBar: AppBar(
-                    title: Text(snapshot.data?.name ?? ""),
+                    title: Text(snapshot.data?.title ?? ""),
                     actions: <Widget>[
                       IconButton(
                         icon: const Icon(
@@ -124,13 +126,13 @@ class _BookDetailsState extends State<BookDetails> {
   void initState() {
     super.initState();
 
-    UserService.isBookSavedInUserLibrary(widget.audioBook?.audioBookId ?? "")
+    UsersLibraryService.isBookSavedInUserLibrary(widget.audioBook?.bookId ?? "")
         .then((value) => changeBookMarkStatus(value));
   }
 
   void addBookToLibrary() async {
-    final res = await UserService.addBookToUserLibrary(
-        widget.audioBook?.audioBookId ?? "");
+    final res = await UsersLibraryService.addBookToUserLibrary(
+        widget.audioBook?.bookId ?? "");
 
     setState(() {
       bookmarked = res;
@@ -197,7 +199,7 @@ class _BookDetailsState extends State<BookDetails> {
           ),
         ),
         Text(
-          widget.audioBook?.name ?? "",
+          widget.audioBook?.title ?? "",
           style: const TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.w700,
@@ -305,8 +307,8 @@ class _EpisodesState extends State<Episodes> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Episode>>(
-        future: AudioBookService.fetchEpisodesUsingAudioBookId(
-            widget.audioBook.audioBookId),
+        future: EpisodesService.fetchEpisodesUsingAudioBookId(
+            widget.audioBook.bookId),
         builder: (BuildContext context, AsyncSnapshot<List<Episode>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Text("Loading...");

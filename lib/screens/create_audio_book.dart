@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:smartfm_poc/config/routes.dart';
-import 'package:smartfm_poc/services/audio_books.dart';
+import 'package:smartfm_poc/services/books_service.dart';
 
 class CreateAudioBook extends StatefulWidget {
   const CreateAudioBook({super.key});
@@ -14,16 +14,20 @@ class CreateAudioBook extends StatefulWidget {
 }
 
 class _CreateAudioBookState extends State<CreateAudioBook> {
-  String name = '';
+  String title = '';
   String genre = '';
   String description = '';
   String language = '';
+  String author = '';
   File? cover;
 
   Future<void> createAudioBook() async {
-    if (name.isEmpty || genre.isEmpty || description.isEmpty || cover == null) {
+    if (title.isEmpty ||
+        genre.isEmpty ||
+        description.isEmpty ||
+        cover == null) {
       Fluttertoast.showToast(
-          msg: "Cover, Name, Genre and Description are required",
+          msg: "Cover, Name, Genre, Author, Description and Cover are required",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
@@ -36,8 +40,8 @@ class _CreateAudioBookState extends State<CreateAudioBook> {
     try {
       final navigator = Navigator.of(context);
 
-      await AudioBookService.createAudioBook(
-          name, description, genre, cover!, language);
+      await BooksService.createBook(
+          title, description, genre, cover!, language, author);
 
       Fluttertoast.showToast(
           msg: "Successfully Created Audiobook",
@@ -103,7 +107,7 @@ class _CreateAudioBookState extends State<CreateAudioBook> {
                       labelText: 'Name',
                     ),
                     onChanged: (value) => setState(() {
-                      name = value;
+                      title = value;
                     }),
                   ),
                   const SizedBox(
@@ -112,6 +116,18 @@ class _CreateAudioBookState extends State<CreateAudioBook> {
                   const Text(
                     "Choose a unique name",
                     style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextField(
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Author',
+                    ),
+                    onChanged: (value) => setState(() {
+                      author = value;
+                    }),
                   ),
                   const SizedBox(
                     height: 20,

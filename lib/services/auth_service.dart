@@ -6,7 +6,7 @@ class AuthService {
   Future<GenerateOtpResponse> generateOtp(String phoneNumber) async {
     try {
       final Response res = await Api.dio.post(
-        '/generate-otp',
+        '/auth/generate-otp',
         data: {'phoneNumber': int.parse(phoneNumber.substring(1))},
       );
 
@@ -15,15 +15,15 @@ class AuthService {
       }
 
       throw Exception(res.data);
-    } on DioException catch (e) {
-      throw Exception(e.response?.data);
+    } on DioException {
+      rethrow;
     }
   }
 
   Future<AuthenticateResponse> authenticate(
       String phoneNumber, String otp) async {
     try {
-      final res = await Api.dio.post('/authenticate', data: {
+      final res = await Api.dio.post('/auth/authenticate', data: {
         'phoneNumber': int.parse(phoneNumber.substring(1)),
         'otp': int.parse(otp)
       });
@@ -33,8 +33,8 @@ class AuthService {
       }
 
       throw Exception(res.data);
-    } on DioException catch (e) {
-      throw Exception(e.response?.data);
+    } on DioException {
+      rethrow;
     }
   }
 }

@@ -6,7 +6,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:smartfm_poc/config/config.dart';
 import 'package:smartfm_poc/config/routes.dart';
 import 'package:smartfm_poc/models/audio_book.dart';
-import 'package:smartfm_poc/services/audio_books.dart';
+import 'package:smartfm_poc/services/books_service.dart';
+import 'package:smartfm_poc/services/episodes_service.dart';
 
 class CreateEpisode extends StatefulWidget {
   const CreateEpisode({super.key});
@@ -64,7 +65,7 @@ class _CreateEpisodeState extends State<CreateEpisode> {
     }
 
     try {
-      await AudioBookService.createEpisode(title, selectedBookId!, episode!);
+      await EpisodesService.createEpisode(title, selectedBookId!, episode!);
 
       navigator.pushNamed(Routes.studio);
     } catch (e) {
@@ -160,7 +161,7 @@ class _PickBookState extends State<PickBook> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<AudioBook>>(
-        future: AudioBookService.fetchAudioBooks(),
+        future: BooksService.fetchAudioBooks(),
         builder:
             (BuildContext context, AsyncSnapshot<List<AudioBook>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -172,8 +173,8 @@ class _PickBookState extends State<PickBook> {
                 itemCount: snapshot.data?.length,
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
-                    onTap: () => widget.updateSelectedBookId(
-                        snapshot.data![index].audioBookId),
+                    onTap: () => widget
+                        .updateSelectedBookId(snapshot.data![index].bookId),
                     child: ListTile(
                       title: Row(
                         children: [
@@ -188,11 +189,11 @@ class _PickBookState extends State<PickBook> {
                               ),
                             ),
                           ),
-                          Text(snapshot.data?[index].name ?? "")
+                          Text(snapshot.data?[index].title ?? "")
                         ],
                       ),
                       leading: Radio<String>(
-                        value: snapshot.data?[index].audioBookId ?? "",
+                        value: snapshot.data?[index].bookId ?? "",
                         groupValue: widget.selectedId,
                         onChanged: (String? value) =>
                             widget.updateSelectedBookId(value ?? ""),

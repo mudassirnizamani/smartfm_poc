@@ -1,3 +1,3 @@
 class Config {
-  static const String apiBaseUrl = "http://localhost:4001";
+  static const String apiBaseUrl = "http://localhost:8080";
 }
