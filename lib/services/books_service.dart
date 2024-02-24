@@ -36,8 +36,6 @@ class BooksService {
     try {
       final res = await Api.dio.get('/books/');
 
-      print(AudioBook.fromJson(res.data["Data"][0]));
-
       if (res.data["Data"] == null) {
         return [];
       }
@@ -50,7 +48,6 @@ class BooksService {
     } on DioException {
       rethrow;
     } catch (e) {
-      print(e);
       throw Exception("error");
     }
   }

@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_cast
+
 import 'package:flutter/material.dart';
 import 'package:smartfm_poc/config/config.dart';
 import 'package:smartfm_poc/config/routes.dart';
@@ -19,85 +21,93 @@ class AudioBooksList extends StatelessWidget {
           : BooksService.fetchAudioBooksUsingUserId(userId!)
               as Future<List<AudioBook>>,
       builder: (BuildContext context, AsyncSnapshot<List<AudioBook>> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return const Center(
-              child: Text("Loading"),
-            );
-          default:
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              return ListView.builder(
-                itemCount: snapshot.data?.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (BuildContext context, int index) {
-                  return GestureDetector(
-                    onTap: () => Navigator.pushNamed(
-                      context,
-                      Routes.audioBook,
-                      arguments: AudioBookParams(
-                          audioBookId: snapshot.data?[index].bookId ?? ""),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: 10,
-                            left: 5,
-                            right: 10,
-                          ),
-                          height: MediaQuery.of(context).size.height * 0.25,
-                          width: MediaQuery.of(context).size.width * 0.3,
-                          child: Stack(
-                            children: [
-                              Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: <BoxShadow>[
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
-                                      blurRadius: 5,
-                                      offset: const Offset(5, 5),
-                                      spreadRadius: 1,
-                                    )
-                                  ],
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.network(
-                                    "${Config.apiBaseUrl}/${snapshot.data?[index].coverImage}",
-                                    fit: BoxFit.fill,
-                                  ),
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Text("loading..");
+        } else if (snapshot.hasError) {
+          return const Text("Error Occurred");
+        } else {
+          return Expanded(
+              child: ListView.builder(
+            itemCount: snapshot.data?.length,
+            scrollDirection: Axis.horizontal,
+            shrinkWrap: true,
+            itemBuilder: (BuildContext context, int index) {
+              return GestureDetector(
+                onTap: () => Navigator.pushNamed(
+                  context,
+                  Routes.audioBook,
+                  arguments: AudioBookParams(
+                    audioBookId: snapshot.data?[index].bookId ?? "",
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 10,
+                    left: 15,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height / 3.9,
+                        width: MediaQuery.of(context).size.width / 2.6,
+                        child: Stack(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 5,
+                                    offset: const Offset(5, 5),
+                                    spreadRadius: 1,
+                                  )
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.network(
+                                  "${Config.apiBaseUrl}/${snapshot.data?[index].coverImage}",
+                                  fit: BoxFit.fill,
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        Text(
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: Text(
                           snapshot.data?[index].title ?? "",
                           style: const TextStyle(
-                            fontSize: 24,
+                            fontSize: 22,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          snapshot.data?[index].description ?? "",
+                      ),
+                      const SizedBox(
+                        height: 2,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: Text(
+                          snapshot.data![index].author.length > 8
+                              ? snapshot.data![index].author.substring(1, 8)
+                              : snapshot.data![index].author,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),
-                        )
-                      ],
-                    ),
-                  );
-                },
+                        ),
+                      )
+                    ],
+                  ),
+                ),
               );
-            }
+            },
+          ));
         }
       },
     );

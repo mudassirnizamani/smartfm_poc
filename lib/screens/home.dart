@@ -15,26 +15,32 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: const BottomNavigator(),
-      appBar: AppBar(
-        elevation: 13.0,
-        actions: <Widget>[
-          IconButton(
-            icon: IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () => Navigator.pushNamed(context, Routes.search),
+        bottomNavigationBar: const BottomNavigator(),
+        appBar: AppBar(
+          elevation: 13.0,
+          actions: <Widget>[
+            IconButton(
+              icon: IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () => Navigator.pushNamed(context, Routes.search),
+              ),
+              tooltip: 'Open shopping cart',
+              onPressed: () {},
             ),
-            tooltip: 'Open shopping cart',
-            onPressed: () {},
-          ),
-        ],
-        automaticallyImplyLeading: false,
-        title: const Text("Hello Mudassir!"),
-      ),
-      drawer: const CustomDrawer(),
-      body: const AudioBooksList(
-        heading: "Recommended for you",
-      ),
-    );
+          ],
+          automaticallyImplyLeading: false,
+          title: const Text("Hello Mudassir!"),
+        ),
+        drawer: const CustomDrawer(),
+        body: const Column(
+          children: [
+            AudioBooksList(
+              heading: "Recommended for you",
+            ),
+            AudioBooksList(
+              heading: "Recommended for you",
+            ),
+          ],
+        ));
   }
 }

@@ -69,7 +69,6 @@ class _MyWidgetState extends State<Auth> {
         _verificationType = VerificationType.otp;
       });
     } catch (e) {
-      print(e);
       Fluttertoast.showToast(
           msg: "Something went wrong",
           toastLength: Toast.LENGTH_SHORT,

@@ -306,7 +306,7 @@ class _SearchState extends State<Search> {
               height: MediaQuery.of(context).size.height * 0.3,
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                children: [
+                children: const [
                   // ...List.generate(bookDirectory.listOfBooks.length,
                   //     (index) => latestSearch(bookDirectory.listOfBooks[index]))
                 ],

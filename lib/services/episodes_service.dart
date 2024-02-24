@@ -7,19 +7,25 @@ import 'package:smartfm_poc/services/api.dart';
 class EpisodesService {
   static Future<void> createEpisode(
       String title, String audioBookId, File episode) async {
-    FormData data = FormData.fromMap({
-      'title': title,
-      'audioBookId': audioBookId,
-      'audioFile': await MultipartFile.fromFile(
-        episode.path,
-        filename: episode.uri.toString(),
-      )
-    });
-
     try {
-      await Api.dio.post('/episode', data: data);
-    } on DioException catch (e) {
-      throw Exception(e.response?.data);
+      FormData data = FormData.fromMap({
+        'title': title,
+        'bookId': audioBookId,
+        'episode': await MultipartFile.fromFile(
+          episode.path,
+          filename: episode.uri.toString(),
+        )
+      });
+
+      await Api.dio.post(
+        '/episodes',
+        data: data,
+        options: Options(
+          receiveTimeout: const Duration(minutes: 2),
+        ),
+      );
+    } on DioException {
+      rethrow;
     }
   }
 
@@ -28,15 +34,15 @@ class EpisodesService {
     try {
       final res = await Api.dio.get("/episodes/book/$audioBookId");
 
-      if (res.data["episodes"] == null) {
+      if (res.data["Data"] == null) {
         return [];
       }
 
-      final List<Episode> chapters = res.data["episodes"]
+      final List<Episode> episodes = res.data["Data"]
           .map<Episode>((json) => Episode.fromJson(json))
           .toList();
 
-      return chapters;
+      return episodes;
     } on DioException {
       rethrow;
     }
