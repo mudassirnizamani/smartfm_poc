@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:smartfm_poc/config/config.dart';
 import 'package:smartfm_poc/config/routes.dart';
 import 'package:smartfm_poc/models/audio_book.dart';
@@ -7,7 +6,6 @@ import 'package:smartfm_poc/models/episode.dart';
 import 'package:smartfm_poc/screens/player.dart';
 import 'package:smartfm_poc/services/books_service.dart';
 import 'package:smartfm_poc/services/episodes_service.dart';
-import 'package:smartfm_poc/services/user_service.dart';
 import 'package:smartfm_poc/services/users_library_service.dart';
 
 class AudioBookParams {
@@ -48,7 +46,7 @@ class _AudioBookDetailsState extends State<AudioBookDetails> {
                     actions: <Widget>[
                       IconButton(
                         icon: const Icon(
-                          Icons.share,
+                          Icons.share_outlined,
                           size: 25,
                         ),
                         onPressed: () {},
@@ -143,6 +141,9 @@ class _BookDetailsState extends State<BookDetails> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
+        const SizedBox(
+          height: 20,
+        ),
         Container(
           margin: const EdgeInsets.only(
             top: 20,
@@ -209,40 +210,59 @@ class _BookDetailsState extends State<BookDetails> {
           height: 8,
         ),
         Text(
-          "By ${widget.audioBook?.genre}",
+          "By ${widget.audioBook?.author}",
           style: const TextStyle(
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            RatingBar.builder(
-              initialRating: 3,
-              minRating: 1,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              ignoreGestures: true,
-              itemSize: 20,
-              itemBuilder: (context, _) => const Icon(
-                Icons.star,
-                color: Colors.amber,
+        const Padding(
+          padding: EdgeInsets.all(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.play_arrow, size: 18),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    "40k",
+                    style: TextStyle(
+                      fontSize: 17,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    "Listens",
+                    style: TextStyle(
+                      fontSize: 17,
+                    ),
+                  )
+                ],
               ),
-              onRatingUpdate: (rating) {},
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            const Text(
-              "3.0",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.star, size: 18),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    "3.0",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )
+                ],
               ),
-            )
-          ],
+            ],
+          ),
         ),
         const SizedBox(
           height: 20,
@@ -288,7 +308,16 @@ class _BookDetailsState extends State<BookDetails> {
                 ))
           ],
         ),
-        Text(widget.audioBook?.description ?? ""),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(15, 20, 15, 15),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Text(
+              widget.audioBook?.description ?? "",
+              textAlign: TextAlign.left,
+            ),
+          ),
+        )
       ],
     );
   }
@@ -329,7 +358,7 @@ class _EpisodesState extends State<Episodes> {
                       title: Text(snapshot.data![index].title),
                       subtitle: Row(children: [
                         const Icon(Icons.alarm),
-                        Text(snapshot.data![index].chapterDuration.toString())
+                        Text(snapshot.data![index].length.toString())
                       ]),
                     ));
           }

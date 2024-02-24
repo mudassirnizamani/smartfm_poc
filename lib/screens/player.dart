@@ -91,10 +91,8 @@ class _PlayerState extends State<Player> {
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.speech());
 
-    _player.playbackEventStream.listen((event) {},
-        onError: (Object e, StackTrace stackTrace) {
-      print('A stream error occurred: $e');
-    });
+    _player.playbackEventStream
+        .listen((event) {}, onError: (Object e, StackTrace stackTrace) {});
   }
 
   @override
@@ -202,7 +200,7 @@ class _PlayerState extends State<Player> {
                               onPressed: () => Navigator.of(context).pop(),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.share),
+                              icon: const Icon(Icons.share_outlined),
                               iconSize: 20,
                               color: Colors.grey[200],
                               onPressed: () {},
@@ -244,46 +242,17 @@ class _PlayerState extends State<Player> {
                               ),
                             ),
                           )
-                          // Container(
-                          //   height: double.infinity,
-                          //   width: double.infinity,
-                          //   decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.circular(20),
-                          //     gradient: LinearGradient(
-                          //       colors: [
-                          //         Colors.black.withOpacity(0.3),
-                          //         Colors.transparent,
-                          //         Colors.black.withOpacity(0.3),
-                          //       ],
-                          //       begin: Alignment.centerLeft,
-                          //       end: Alignment.centerRight,
-                          //     ),
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),
                     Text(
                       args.audioBook.title,
                       style: const TextStyle(
-                        fontSize: 30,
+                        fontSize: 28,
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
                       ),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      "By ${args.audioBook.genre}",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 8,
+                      textAlign: TextAlign.center,
                     ),
                     Expanded(
                       child: Container(
@@ -300,12 +269,15 @@ class _PlayerState extends State<Player> {
                           right: 30,
                         ),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              "Chapter 2",
-                              style: TextStyle(
-                                fontSize: 28,
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              "Episode ${args.episode?.episodeNo}",
+                              style: const TextStyle(
+                                fontSize: 22,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.black,
                               ),

@@ -32,8 +32,16 @@ class _HomeState extends State<Home> {
         title: const Text("Hello Mudassir!"),
       ),
       drawer: const CustomDrawer(),
-      body: const AudioBooksList(
-        heading: "Recommended for you",
+      body: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AudioBooksList(
+            heading: "Recommended for you",
+          ),
+          AudioBooksList(
+            heading: "Recommended for you",
+          ),
+        ],
       ),
     );
   }
